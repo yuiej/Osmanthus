@@ -19,10 +19,11 @@ public class ExcelWriter {
 
     private static List<String> CELL_HEADS;
 
-    {
+    static {
         CELL_HEADS = new ArrayList<>();
-        CELL_HEADS.add("景点从属");
-        CELL_HEADS.add("景点名称");
+        CELL_HEADS.add("名称");
+        CELL_HEADS.add("经度");
+        CELL_HEADS.add("维度");
     }
 
 
@@ -31,13 +32,24 @@ public class ExcelWriter {
         try {
             File exportFile = new File(desPath);
             if (!exportFile.exists()){
+                exportFile.createNewFile();
             }
-            exportFile.createNewFile();
             fileOutputStream = new FileOutputStream(desPath);
             workbook.write(fileOutputStream);
             fileOutputStream.flush();
         } catch (IOException e) {
             e.printStackTrace();
+        }finally {
+            try {
+                if (null != fileOutputStream){
+                    fileOutputStream.close();
+                }
+                if (null != workbook){
+                    workbook.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
 
@@ -63,12 +75,17 @@ public class ExcelWriter {
         int cellNum = 0;
         Cell cell;
         //从属
-        cell = row.createCell(cellNum++);
-        cell.setCellValue(data.getSubordinate() == null ? "" : data.getSubordinate());
+        /*cell = row.createCell(cellNum++);
+        cell.setCellValue(data.getSubordinate() == null ? "" : data.getSubordinate());*/
         //景区名称
         cell = row.createCell(cellNum++);
         cell.setCellValue(data.getName() == null ? "" : data.getName());
-
+        //经度
+        cell = row.createCell(cellNum++);
+        cell.setCellValue(data.getLongitude() == null ? "" : data.getLongitude());
+        //维度
+        cell = row.createCell(cellNum++);
+        cell.setCellValue(data.getDimensionality() == null ? "" : data.getDimensionality());
     }
 
     private static Sheet buildDataSheet(Workbook workbook){

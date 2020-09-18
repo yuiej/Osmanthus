@@ -51,4 +51,15 @@ public class ScenicSpot {
     public void setSubordinate(String subordinate){
         this.subordinate = subordinate;
     }
+
+    @Override
+    public String toString(){
+        return "ScenicSpot{" +
+                "name='" + name + '\'' +
+                ", address='" + address + '\'' +
+                ", longitude='" + longitude + '\'' +
+                ", dimensionality='" + dimensionality + '\'' +
+                ", subordinate='" + subordinate + '\'' +
+                '}';
+    }
 }

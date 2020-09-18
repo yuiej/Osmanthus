@@ -1,6 +1,8 @@
 package com.travel.util;
 
 import java.io.File;
+
+import com.travel.entity.ScenicSpot;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
@@ -65,34 +67,38 @@ public class AddressUtil {
     }
 
 
-    public static void readPorts() throws IOException, InvalidFormatException{
+    public static void splitSpotTofiles() throws IOException, InvalidFormatException{
         //excel文件路径
         String excelPath = "D:\\yujie\\Documents\\旅游地点.xlsx";
 
         Workbook wb = getWorkbook(excelPath);
         //开始解析
-        List<String> data = new ArrayList<>();
+        List<ScenicSpot> spotList = new ArrayList<>();
         Sheet sheet = wb.getSheetAt(1);     //读取sheet 0
         for(int rIndex = sheet.getFirstRowNum(); rIndex <= sheet.getLastRowNum(); rIndex++) {   //遍历行
             Row row = sheet.getRow(rIndex);
             if (row != null) {
                 Cell cell = row.getCell(0);
-                data.add(cell.toString());
+                String all = cell.toString();
+                String[] split = all.split("：");
+
+                for (String subSpot:split[1].split("、")
+                     ) {
+                    ScenicSpot scenicSpot = new ScenicSpot();
+                    scenicSpot.setSubordinate(split[0].trim());
+                    scenicSpot.setName(subSpot.trim());
+                    spotList.add(scenicSpot);
+                }
             }
         }
 
+        String des = "D:\\yujie\\Documents\\休闲年卡.xlsx";
 
-        //title
-        String[] title = new String[]{"景区所属","景区名称"};
-        File file = new File("D:\\yujie\\Documents\\休闲年卡.xlsx");
-        if (file.exists()){
-            file.delete();
-        }
-        file.createNewFile();
-        for (String s:data
-             ) {
-            String[] row = s.split("：");
+        Workbook workbook = ExcelWriter.exportData(spotList);
+        ExcelWriter.writeToFile(workbook,des);
+    }
 
-        }
+    private AddressUtil(){
+
     }
 }
